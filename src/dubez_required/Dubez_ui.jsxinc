@@ -1,11 +1,116 @@
-function launch( )
-{
+function launch() {
+    #include Dubez_icons.jsxinc
 
+    // FUNCTIONS
+    function ui_hsymButton_clicked()
+	{
+		if (ui_transformOptionsSelector.index == 0)
+		{
+			//get selected properties in comp
+			var props = DuAEF.DuAE.Comp.getSelectedProps(PropertyValueType.SHAPE);
+			if (props.length == 0) return;
 
+			DuAEF.DuAE.App.beginUndoGroup("Shape horizontal symetry");
+
+            new Iterator(props).do(DuAEF.DuAE.Property.Bezier.horizontalSymetry);
+
+			DuAEF.DuAE.App.endUndoGroup();
+		}
+		else
+		{
+			var comp = DuAEF.DuAE.Project.getActiveComp();
+			if (!comp) return;
+			var layers = comp.selectedLayers;
+			if (layers.length == 0) return;
+
+			DuAEF.DuAE.App.beginUndoGroup("Shape horizontal symetry");
+			for (var i = 0 ; i < layers.length ; i++)
+			{
+				var props = DuAEF.DuAE.Layer.getSelectedProps(layers[i],PropertyValueType.SHAPE);
+				if (props.length == 0) continue;
+
+				DuAEF.DuAE.Property.Bezier.horizontalSymetry(props);
+			}
+			DuAEF.DuAE.App.endUndoGroup();
+		}
+	}
+
+	function ui_vsymButton_clicked()
+	{
+		if (ui_transformOptionsSelector.index == 0)
+		{
+			//get selected properties in comp
+			var props = DuAEF.DuAE.Comp.getSelectedProps(PropertyValueType.SHAPE);
+			if (props.length == 0) return;
+
+			DuAEF.DuAE.App.beginUndoGroup("Shape horizontal symetry");
+
+			new Iterator(props).do(DuAEF.DuAE.Property.Bezier.verticalSymetry);
+
+			DuAEF.DuAE.App.endUndoGroup();
+		}
+		else
+		{
+			var comp = DuAEF.DuAE.Project.getActiveComp();
+			if (!comp) return;
+			var layers = comp.selectedLayers;
+			if (layers.length == 0) return;
+
+			DuAEF.DuAE.App.beginUndoGroup("Shape horizontal symetry");
+			for (var i = 0 ; i < layers.length ; i++)
+			{
+				var props = DuAEF.DuAE.Layer.getSelectedProps(layers[i],PropertyValueType.SHAPE);
+				if (props.length == 0) continue;
+
+				DuAEF.DuAE.Property.Bezier.verticalSymetry(props);
+			}
+			DuAEF.DuAE.App.endUndoGroup();
+		}
+	}
+    
+    function ui_scriptifyButton_clicked()
+    {
+        var file = new File('E:/Shape.jsxinc');
+
+        var props = DuAEF.DuAE.Comp.getSelectedProps(PropertyValueType.SHAPE);
+        if (props.length == 0) return;
+ 
+        //Asks for a save file
+		var file = DuAEF.DuJS.Fs.saveFileDialog("Where do you want to export the shapes?", "ExtendScript: *.jsx;*.jsxinc;*.js, All files: *.*", "jsx");
+		if (!file) return;
+
+        for (var i = 0, num = props.length; i < num; i++)
+        {
+            DuAEF.DuAE.Property.Bezier.exportToJsxinc( props[i], file, false, i != 0, 'shape' + i );
+        }
+        
+    }
+
+    // UI CONTROLS
+    uiContents = ui.contents
+
+    DuAEF.DuScriptUI.addStaticText( uiContents, 'Transform:' );
+    var ui_transformGroup = DuAEF.DuScriptUI.addGroup( uiContents );
+    ui_transformGroup.alignment = ['center','top'];
+    var ui_hsymButton = DuAEF.DuScriptUI.addButton(ui_transformGroup,'',DuAEF.DuBinary.toFile(w18_hsym_l),"Horizontal Symetry",DuAEF.DuBinary.toFile(w18_hsym_r));
+    var ui_vsymButton = DuAEF.DuScriptUI.addButton(ui_transformGroup,'',DuAEF.DuBinary.toFile(w18_vsym_l),"Vertical Symetry",DuAEF.DuBinary.toFile(w18_vsym_r));
+
+    var ui_transformOptionsSelector = DuAEF.DuScriptUI.addSelector(uiContents);
+    ui_transformOptionsSelector.addButton("Individual",undefined,"Transform each path individually.");
+	ui_transformOptionsSelector.addButton("By layer",undefined,"Group all paths transform by layer");
+    ui_transformOptionsSelector.setCurrentIndex(0);
+
+    DuAEF.DuScriptUI.addStaticText( uiContents, 'Utils:' );
+    var ui_scriptifyButton = DuAEF.DuScriptUI.addButton(uiContents,'Scriptify paths',DuAEF.DuBinary.toFile(w18_jsshape_l),"Convert the selected Bézier paths into an extendscript file easy to use in your own scripts.",DuAEF.DuBinary.toFile(w18_jsshape_r));
 
     //=== BOTTOM ===
-	ui_rainboxURL = DuAEF.DuScriptUI.addStaticText(ui,'v' + version + ' | rainboxprod.coop',undefined,undefined,false);
-	ui_rainboxURL.alignment = ['left','bottom'];
+    ui_rainboxURL = DuAEF.DuScriptUI.addStaticText( ui, 'v' + DuAEF.scriptVersion + ' | rainboxprod.coop', undefined, undefined, false );
+    ui_rainboxURL.alignment = [ 'left', 'bottom' ];
+
+    //CONNECTIONS
+    ui_hsymButton.onClick = ui_hsymButton_clicked;
+    ui_vsymButton.onClick = ui_vsymButton_clicked;
+    ui_scriptifyButton.onClick = ui_scriptifyButton_clicked;
 
 
     //Show UI

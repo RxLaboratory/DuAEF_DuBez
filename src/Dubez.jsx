@@ -24,18 +24,20 @@
 
 //encapsulate the script in a function to avoid global variables
 ( function ( thisObj ) {
+	#include DuAEF.jsxinc
 
     //================
-    var version = '0.0.1';
-    var scriptName = "Dubez";
+    DuAEF.scriptVersion = '0.1.0';
+    DuAEF.scriptName = "Dubez";
     //================
-    #include DuAEF.jsxinc
+
+	//DuAEF.debug = true;
 
     // _______ UI SETUP _______
-    var ui = DuAEF.DuScriptUI.createUI( thisObj, scriptName );
+    var ui = DuAEF.DuScriptUI.createUI( thisObj );
 
     //INIT
-    DuAEF.DuScriptUI.askFilesAndNetworkAccess( ui, launch, scriptName );
+    DuAEF.DuScriptUI.askFilesAndNetworkAccess( ui, launch );
 
     //MAIN UI
     #include "dubez_required/Dubez_ui.jsxinc"
